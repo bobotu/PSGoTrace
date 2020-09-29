@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PSGoTrace.Library.Analyzer;
 using PSGoTrace.Library.Helper;
-using TraceViewer.Trace.Analyzer;
 
 namespace PSGoTrace.Library
 {

@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using HPCsharp;
-using PSGoTrace.Library.Records;
-using TraceViewer.Trace.Helper;
+using PSGoTrace.Library.Helper;
 
-namespace TraceViewer.Trace.Records
+namespace PSGoTrace.Library.Parser
 {
-    internal class EventsOrder
+    internal class EventsSorter
     {
         private const ulong Unordered = ~0UL;
         private const ulong Garbage = ~0UL - 1;
         private const ulong Noseq = ~0UL;
         private const ulong Seqinc = ~0UL - 1;
         private readonly int _version;
+        private readonly IProgressRegistry? _registry;
 
-        public EventsOrder(int version)
+        public EventsSorter(int version, IProgressRegistry? registry = null)
         {
             _version = version;
+            _registry = registry;
         }
 
         public List<TraceEvent> SortEvents(IDictionary<int, List<TraceEvent>> rawBatches)
@@ -25,7 +26,7 @@ namespace TraceViewer.Trace.Records
             return _version < 1007 ? Sort1005(rawBatches) : Sort1007(rawBatches);
         }
 
-        private static List<TraceEvent> Sort1007(IDictionary<int, List<TraceEvent>> rawBatches)
+        private List<TraceEvent> Sort1007(IDictionary<int, List<TraceEvent>> rawBatches)
         {
             var pending = 0;
             Span<EventBatch> batches = new EventBatch[rawBatches.Count];
@@ -36,40 +37,56 @@ namespace TraceViewer.Trace.Records
                 batches[i] = new EventBatch(eventList, false);
             }
 
+            using var totalProgress = _registry?.Start("Sort Events", "Sort events based on states transition");
             var gs = new Dictionary<ulong, GState>();
             var frontier = new FibonacciHeap<OrderEvent>();
-            for (; pending != 0; pending--)
-            {
-                for (var i = 0; i < rawBatches.Count; i++)
-                {
-                    ref var b = ref batches[i];
-                    if (b.Selected || !b.HasMore()) continue;
-                    var ev = b.Head;
-                    var (g, init, next) = StateTransition(ev);
-                    if (!TransitionReady(g, gs.GetValueOrDefault(g), init)) continue;
-                    frontier.Add(new OrderEvent(ev, i, g, init, next));
-                    b.MoveNext();
-                    b.Selected = true;
-                    switch (ev.Type)
-                    {
-                        case EventType.GoStartLocal:
-                            ev.Type = EventType.GoStart;
-                            break;
-                        case EventType.GoUnblockLocal:
-                            ev.Type = EventType.GoUnblock;
-                            break;
-                        case EventType.GoSysExitLocal:
-                            ev.Type = EventType.GoSysExit;
-                            break;
-                    }
-                }
+            var totalCount = pending;
 
-                if (frontier.Count == 0) throw new InvalidTraceException("no consistent ordering of events possible");
-                var f = frontier.Pop();
-                Transition(gs, f.G, f.Init, f.Next);
-                result.Add(f.Event);
-                if (!batches[f.Batch].Selected) throw new Exception("frontier batch is not selected");
-                batches[f.Batch].Selected = false;
+            using (var progress =
+                _registry?.Start("Reorganize events", "Reorganize events based on relationship", totalProgress))
+            {
+                for (; pending != 0; pending--)
+                {
+                    if (!(progress is null)) progress.PercentComplete = (totalCount - pending) / (float) totalCount;
+
+                    for (var i = 0; i < rawBatches.Count; i++)
+                    {
+                        ref var b = ref batches[i];
+                        if (b.Selected || !b.HasMore()) continue;
+                        var ev = b.Head;
+                        var (g, init, next) = StateTransition(ev);
+                        if (!TransitionReady(g, gs.GetValueOrDefault(g), init)) continue;
+                        frontier.Add(new OrderEvent(ev, i, g, init, next));
+                        b.MoveNext();
+                        b.Selected = true;
+                        switch (ev.Type)
+                        {
+                            case EventType.GoStartLocal:
+                                ev.Type = EventType.GoStart;
+                                break;
+                            case EventType.GoUnblockLocal:
+                                ev.Type = EventType.GoUnblock;
+                                break;
+                            case EventType.GoSysExitLocal:
+                                ev.Type = EventType.GoSysExit;
+                                break;
+                        }
+                    }
+
+                    if (frontier.Count == 0)
+                        throw new InvalidTraceException("no consistent ordering of events possible");
+                    var f = frontier.Pop();
+                    Transition(gs, f.G, f.Init, f.Next);
+                    result.Add(f.Event);
+                    if (!batches[f.Batch].Selected) throw new Exception("frontier batch is not selected");
+                    batches[f.Batch].Selected = false;
+                }
+            }
+
+            if (!(totalProgress is null))
+            {
+                totalProgress.CurrentOperation = "Post process events";
+                totalProgress.PercentComplete = 80;
             }
 
             // At this point we have a consistent stream of events.
@@ -107,6 +124,12 @@ namespace TraceViewer.Trace.Records
                         break;
                     }
                 }
+
+            if (!(totalProgress is null))
+            {
+                totalProgress.CurrentOperation = "Sort events based on timestamp";
+                totalProgress.PercentComplete = 85;
+            }
 
             return result.SortMergeStablePar(TraceEvent.TsComparer);
         }

@@ -1,6 +1,6 @@
-﻿using TraceViewer.Trace.Records;
+﻿using PSGoTrace.Library.Parser;
 
-namespace TraceViewer.Trace.Analyzer
+namespace PSGoTrace.Library.Analyzer
 {
     public class UserRegion
     {

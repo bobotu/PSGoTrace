@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using PSGoTrace.Library.Records;
 
-namespace TraceViewer.Trace.Records
+namespace PSGoTrace.Library.Parser
 {
     public sealed class EventDescription
     {

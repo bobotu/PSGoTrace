@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TraceViewer.Trace.Helper
+namespace PSGoTrace.Library.Helper
 {
     internal class FibonacciHeap<T>
     {

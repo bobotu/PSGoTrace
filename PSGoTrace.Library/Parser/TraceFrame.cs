@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Text;
 
-namespace TraceViewer.Trace.Records
+namespace PSGoTrace.Library.Parser
 {
     public readonly struct TraceFrame : IEquatable<TraceFrame>
     {
@@ -10,6 +11,14 @@ namespace TraceViewer.Trace.Records
             Fn = fn;
             File = file;
             Line = line;
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(Fn);
+            sb.Append($"\t{File}:{Line}");
+            return sb.ToString();
         }
 
         public ulong Pc { get; }

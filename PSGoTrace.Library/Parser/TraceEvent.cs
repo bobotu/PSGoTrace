@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using PSGoTrace.Library.Records;
+using System.Text;
 
-namespace TraceViewer.Trace.Records
+namespace PSGoTrace.Library.Parser
 {
     public class TraceEvent : IEquatable<TraceEvent>
     {

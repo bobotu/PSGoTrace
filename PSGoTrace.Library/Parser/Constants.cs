@@ -1,4 +1,4 @@
-﻿namespace TraceViewer.Trace.Records
+﻿namespace PSGoTrace.Library.Parser
 {
     internal enum GStatus
     {

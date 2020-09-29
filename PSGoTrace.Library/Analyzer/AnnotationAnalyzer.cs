@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PSGoTrace.Library.Records;
-using TraceViewer.Trace.Analyzer;
-using TraceViewer.Trace.Records;
+using PSGoTrace.Library.Parser;
 
 namespace PSGoTrace.Library.Analyzer
 {
     public class AnnotationAnalyzer
     {
-        public AnnotationAnalyzer(TraceRecords trace, GoroutinesAnalyzer goroutinesAnalyzer)
+        public AnnotationAnalyzer(IList<TraceEvent> events, GoroutinesAnalyzer goroutinesAnalyzer)
         {
-            if (trace.Events.Count == 0) throw new ArgumentException("trace records is empty");
-            var trace1 = trace;
+            if (events.Count == 0) throw new ArgumentException("trace records is empty");
 
-            var firstTimestamp = trace1.Events[0].Ts;
-            var lastTimestamp = trace1.Events[^1].Ts;
+            var firstTimestamp = events[0].Ts;
+            var lastTimestamp = events[^1].Ts;
             var tasks = new Dictionary<ulong, UserTask>();
             var regions = new List<UserRegion>();
             var gc = new List<TraceEvent>();
@@ -25,7 +22,7 @@ namespace PSGoTrace.Library.Analyzer
                 return new UserTask(firstTimestamp, lastTimestamp, id);
             }
 
-            foreach (var ev in trace1.Events)
+            foreach (var ev in events)
                 switch (ev.Type)
                 {
                     case EventType.UserTaskCreate:

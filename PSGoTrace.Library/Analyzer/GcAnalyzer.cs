@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PSGoTrace.Library.Records;
-using TraceViewer.Trace.Records;
+using PSGoTrace.Library.Parser;
 
-namespace TraceViewer.Trace.Analyzer
+namespace PSGoTrace.Library.Analyzer
 {
     public readonly struct MutatorUtil
     {
@@ -50,12 +49,12 @@ namespace TraceViewer.Trace.Analyzer
             PerProc = 1 << 5
         }
 
-        private readonly TraceRecords _trace;
+        private readonly IList<TraceEvent> _events;
 
-        public GcAnalyzer(TraceRecords trace)
+        public GcAnalyzer(IList<TraceEvent> events)
         {
-            if (trace.Events.Count == 0) throw new ArgumentException("trace contains no events");
-            _trace = trace;
+            if (events.Count == 0) throw new ArgumentException("trace contains no events");
+            _events = events;
         }
 
         public IList<IList<MutatorUtil>> MutatorUtilization(Option option)
@@ -68,7 +67,7 @@ namespace TraceViewer.Trace.Analyzer
             var block = new Dictionary<ulong, TraceEvent>();
 
             MutatorUtil mu;
-            foreach (var ev in _trace.Events)
+            foreach (var ev in _events)
             {
                 var psSpan = ps;
                 switch (ev.Type)
@@ -205,7 +204,7 @@ namespace TraceViewer.Trace.Analyzer
             // is important to mark the end of the trace. The exact value
             // shouldn't matter since no window should extend beyond this,
             // but using 0 is symmetric with the start of the trace.
-            mu = new MutatorUtil(_trace.Events[^1].Ts, 0);
+            mu = new MutatorUtil(_events[^1].Ts, 0);
             ps.ForEach(p => AddUtil(result[p.series], mu));
             return result;
         }

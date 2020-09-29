@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TraceViewer.Trace.Records
+namespace PSGoTrace.Library.Parser
 {
     public sealed class EmptyTraceException : Exception
     {

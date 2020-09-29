@@ -9,7 +9,7 @@
 @{
 
 # Script module or binary module file associated with this manifest.
- RootModule = '.\bin\PSGoTrace.Cmdlet.dll'
+ RootModule = '.\bin\PSGoTrace.dll'
 
 # Version number of this module.
 ModuleVersion = '0.0.1'
@@ -72,7 +72,7 @@ RequiredAssemblies = @('bin\HPCsharp.dll', 'bin\Z.ExtensionMethods.dll', 'bin\PS
 FunctionsToExport = @()
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @('Open-GoTrace')
+CmdletsToExport = '*'
 
 # Variables to export from this module
 VariablesToExport = '*'

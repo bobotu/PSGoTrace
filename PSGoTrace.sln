@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSGoTrace.Cmdlet", "PSGoTrace.Cmdlet\PSGoTrace.Cmdlet.csproj", "{C110C12E-A29F-4F34-81BF-60ACB0300B7D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSGoTrace", "PSGoTrace\PSGoTrace.csproj", "{C110C12E-A29F-4F34-81BF-60ACB0300B7D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSGoTrace.Library", "PSGoTrace.Library\PSGoTrace.Library.csproj", "{342C7AEC-DF63-4444-9F76-1BA7E6396ADE}"
 EndProject
