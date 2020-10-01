@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace PSGoTrace.Library.Parser
+namespace PSGoTrace.Library.Types
 {
     public class TraceEvent : IEquatable<TraceEvent>
     {
@@ -13,7 +12,6 @@ namespace PSGoTrace.Library.Parser
             P = p;
             G = g;
             Args = new ulong[3];
-            Stack = new List<TraceFrame>();
         }
 
         public int Offset { get; }
@@ -23,7 +21,7 @@ namespace PSGoTrace.Library.Parser
         public int P { get; internal set; }
         public ulong G { get; internal set; }
         public ulong StackId { get; internal set; }
-        public List<TraceFrame> Stack { get; internal set; }
+        public StackTrace? Stack { get; internal set; }
         public ulong[] Args { get; }
         public string[]? StringArgs { get; internal set; }
         public TraceEvent? Link { get; internal set; }

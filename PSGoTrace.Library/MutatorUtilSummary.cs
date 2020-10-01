@@ -1,23 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using PSGoTrace.Library.Parser;
+using PSGoTrace.Library.Types;
 
-namespace PSGoTrace.Library.Analyzer
+namespace PSGoTrace.Library
 {
-    public readonly struct MutatorUtil
-    {
-        public long Time { get; }
-        public double Util { get; }
-
-        public MutatorUtil(long time, double util)
-        {
-            Time = time;
-            Util = util;
-        }
-    }
-
-    public class GcAnalyzer
+    public class MutatorUtilSummary : IEnumerable<MutatorUtilSeries>
     {
         [Flags]
         public enum Option
@@ -49,27 +38,32 @@ namespace PSGoTrace.Library.Analyzer
             PerProc = 1 << 5
         }
 
-        private readonly IList<TraceEvent> _events;
+        private readonly IList<MutatorUtilSeries> _utils;
+        private readonly Option _option;
 
-        public GcAnalyzer(IList<TraceEvent> events)
-        {
-            if (events.Count == 0) throw new ArgumentException("trace contains no events");
-            _events = events;
-        }
+        public bool IncludeStw => (_option & Option.Stw) != 0;
+        public bool IncludeBackground => (_option & Option.Background) != 0;
+        public bool IncludeAssist => (_option & Option.Assist) != 0;
+        public bool IncludeSweep => (_option & Option.Sweep) != 0;
+        public bool IsPerProc => (_option & Option.PerProc) != 0;
+        public int ProcCount => _utils.Count;
+        public MutatorUtilSeries this[Index index] => _utils[index];
 
-        public IList<IList<MutatorUtil>> MutatorUtilization(Option option)
+        public MutatorUtilSummary(Option prop, IList<TraceEvent> events)
         {
+            if (events.Count == 0) throw new ArgumentException("Events cannot be empty");
+            _option = prop;
+            _utils = new List<MutatorUtilSeries>();
+
             var ps = new List<(int gc, int series)>();
             var stw = 0;
-            var result = new List<IList<MutatorUtil>>();
             var assists = new HashSet<ulong>();
             var bgMark = new HashSet<ulong>();
             var block = new Dictionary<ulong, TraceEvent>();
 
             MutatorUtil mu;
-            foreach (var ev in _events)
+            foreach (var ev in events)
             {
-                var psSpan = ps;
                 switch (ev.Type)
                 {
                     case EventType.Gomaxprocs:
@@ -77,8 +71,8 @@ namespace PSGoTrace.Library.Analyzer
                         var gomaxprocs = (int) ev.Args[0];
                         if (ps.Count > gomaxprocs)
                         {
-                            if ((option & Option.PerProc) != 0)
-                                ps.Skip(gomaxprocs).ForEach(p => AddUtil(result[p.series], new MutatorUtil(ev.Ts, 0)));
+                            if ((prop & Option.PerProc) != 0)
+                                ps.Skip(gomaxprocs).ForEach(p => _utils[p.series].Add(new MutatorUtil(ev.Ts, 0)));
 
                             ps.RemoveRange(gomaxprocs, ps.Count - gomaxprocs);
                         }
@@ -86,10 +80,10 @@ namespace PSGoTrace.Library.Analyzer
                         while (ps.Count < gomaxprocs)
                         {
                             var series = 0;
-                            if ((option & Option.PerProc) != 0 || result.Count == 0)
+                            if ((prop & Option.PerProc) != 0 || _utils.Count == 0)
                             {
-                                series = result.Count;
-                                result.Add(new List<MutatorUtil> {new MutatorUtil(ev.Ts, 1)});
+                                series = _utils.Count;
+                                _utils.Add(new MutatorUtilSeries {new MutatorUtil(ev.Ts, 1)});
                             }
 
                             ps.Add((0, series));
@@ -99,17 +93,17 @@ namespace PSGoTrace.Library.Analyzer
                     }
                     case EventType.GcStwStart:
                     {
-                        if ((option & Option.Stw) != 0) stw++;
+                        if ((prop & Option.Stw) != 0) stw++;
                         break;
                     }
                     case EventType.GcStwDone:
                     {
-                        if ((option & Option.Stw) != 0) stw--;
+                        if ((prop & Option.Stw) != 0) stw--;
                         break;
                     }
                     case EventType.GcMarkAssistStart:
                     {
-                        if ((option & Option.Assist) != 0)
+                        if ((prop & Option.Assist) != 0)
                         {
                             ps[ev.P] = (ps[ev.P].gc + 1, ps[ev.P].series);
                             assists.Add(ev.G);
@@ -119,7 +113,7 @@ namespace PSGoTrace.Library.Analyzer
                     }
                     case EventType.GcMarkAssistDone:
                     {
-                        if ((option & Option.Assist) != 0)
+                        if ((prop & Option.Assist) != 0)
                         {
                             ps[ev.P] = (ps[ev.P].gc - 1, ps[ev.P].series);
                             assists.Remove(ev.G);
@@ -129,13 +123,13 @@ namespace PSGoTrace.Library.Analyzer
                     }
                     case EventType.GcSweepStart:
                     {
-                        if ((option & Option.Sweep) != 0)
+                        if ((prop & Option.Sweep) != 0)
                             ps[ev.P] = (ps[ev.P].gc + 1, ps[ev.P].series);
                         break;
                     }
                     case EventType.GcSweepDone:
                     {
-                        if ((option & Option.Sweep) != 0)
+                        if ((prop & Option.Sweep) != 0)
                             ps[ev.P] = (ps[ev.P].gc - 1, ps[ev.P].series);
                         break;
                     }
@@ -148,10 +142,10 @@ namespace PSGoTrace.Library.Analyzer
                         // they kick all of the goroutines off
                         // that P, so don't directly
                         // contribute to goroutine latency.
-                        if ((option & Option.Background) != 0 &&
+                        if ((prop & Option.Background) != 0 &&
                             ev.StringArgs![0].StartsWith("GC ") &&
                             ev.StringArgs![0] != "GC (idle)" &&
-                            !((option & Option.PerProc) != 0 && ev.StringArgs![0] == "GC (dedicated)"))
+                            !((prop & Option.PerProc) != 0 && ev.StringArgs![0] == "GC (dedicated)"))
                         {
                             bgMark.Add(ev.G);
                             ps[ev.P] = (ps[ev.P].gc + 1, ps[ev.P].series);
@@ -183,19 +177,19 @@ namespace PSGoTrace.Library.Analyzer
                     }
                 }
 
-                if ((option & Option.PerProc) == 0)
+                if ((prop & Option.PerProc) == 0)
                 {
                     if (ps.Count == 0) continue;
                     var gcPs = stw > 0 ? ps.Count : ps.Count(v => v.gc > 0);
                     mu = new MutatorUtil(ev.Ts, 1 - gcPs / (double) ps.Count);
-                    AddUtil(result[0], mu);
+                    _utils[0].Add(mu);
                 }
                 else
                 {
                     foreach (var (gc, series) in ps)
                     {
                         var util = stw > 0 || gc > 0 ? 0 : 1;
-                        AddUtil(result[series], new MutatorUtil(ev.Ts, util));
+                        _utils[series].Add(new MutatorUtil(ev.Ts, util));
                     }
                 }
             }
@@ -204,24 +198,15 @@ namespace PSGoTrace.Library.Analyzer
             // is important to mark the end of the trace. The exact value
             // shouldn't matter since no window should extend beyond this,
             // but using 0 is symmetric with the start of the trace.
-            mu = new MutatorUtil(_events[^1].Ts, 0);
-            ps.ForEach(p => AddUtil(result[p.series], mu));
-            return result;
+            mu = new MutatorUtil(events[^1].Ts, 0);
+            ps.ForEach(p => _utils[p.series].Add(mu));
         }
 
-        private static void AddUtil(IList<MutatorUtil> utils, MutatorUtil mu)
-        {
-            if (utils.Count > 0)
-            {
-                if (Math.Abs(mu.Util - utils[^1].Util) < 1e-5) return;
-                if (mu.Time == utils[^1].Time)
-                {
-                    if (mu.Util < utils[^1].Util) utils[^1] = mu;
-                    return;
-                }
-            }
+        public IEnumerator<MutatorUtilSeries> GetEnumerator() => _utils.GetEnumerator();
 
-            utils.Add(mu);
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

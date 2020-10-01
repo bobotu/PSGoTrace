@@ -1,4 +1,4 @@
-﻿namespace PSGoTrace.Library.Analyzer
+﻿namespace PSGoTrace.Library
 {
     public struct ExecutionStat
     {

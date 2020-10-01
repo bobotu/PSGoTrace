@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using HPCsharp;
-using PSGoTrace.Library.Helper;
+using PSGoTrace.Library.Types;
+using PSGoTrace.Library.Util;
 
-namespace PSGoTrace.Library.Parser
+namespace PSGoTrace.Library
 {
     internal class EventsSorter
     {
         private const ulong Unordered = ~0UL;
         private const ulong Garbage = ~0UL - 1;
-        private const ulong Noseq = ~0UL;
-        private const ulong Seqinc = ~0UL - 1;
+        private const ulong NoSeq = ~0UL;
+        private const ulong SeqInc = ~0UL - 1;
         private readonly int _version;
         private readonly IProgressRegistry? _registry;
 
@@ -160,15 +161,15 @@ namespace PSGoTrace.Library.Parser
             if (!TransitionReady(g, curr, init)) throw new Exception("event sequences are broken");
             gs[g] = next.Seq switch
             {
-                Noseq => new GState(curr.Seq, next.Status),
-                Seqinc => new GState(curr.Seq + 1, next.Status),
+                NoSeq => new GState(curr.Seq, next.Status),
+                SeqInc => new GState(curr.Seq + 1, next.Status),
                 _ => next
             };
         }
 
         private static bool TransitionReady(ulong g, GState curr, GState init)
         {
-            return g == Unordered || (init.Seq == Noseq || init.Seq == curr.Seq) && init.Status == curr.Status;
+            return g == Unordered || (init.Seq == NoSeq || init.Seq == curr.Seq) && init.Status == curr.Status;
         }
 
         private static (ulong g, GState init, GState next) StateTransition(TraceEvent ev)
@@ -191,7 +192,7 @@ namespace PSGoTrace.Library.Parser
                     // is already merged).
                     // seqinc is a stub for cases when event increments g sequence,
                     // but since we don't know current seq we also don't know next seq.
-                    return (ev.G, new GState(Noseq, GStatus.Runnable), new GState(Seqinc, GStatus.Running));
+                    return (ev.G, new GState(NoSeq, GStatus.Runnable), new GState(SeqInc, GStatus.Running));
                 case EventType.GoBlock:
                 case EventType.GoBlockSend:
                 case EventType.GoBlockRecv:
@@ -202,17 +203,17 @@ namespace PSGoTrace.Library.Parser
                 case EventType.GoSleep:
                 case EventType.GoSysBlock:
                 case EventType.GoBlockGc:
-                    return (ev.G, new GState(Noseq, GStatus.Running), new GState(Noseq, GStatus.Waiting));
+                    return (ev.G, new GState(NoSeq, GStatus.Running), new GState(NoSeq, GStatus.Waiting));
                 case EventType.GoSched:
                 case EventType.GoPreempt:
-                    return (ev.G, new GState(Noseq, GStatus.Running), new GState(Noseq, GStatus.Runnable));
+                    return (ev.G, new GState(NoSeq, GStatus.Running), new GState(NoSeq, GStatus.Runnable));
                 case EventType.GoUnblock:
                 case EventType.GoSysExit:
                     return (ev.Args[0], new GState(ev.Args[1], GStatus.Waiting),
                         new GState(ev.Args[1] + 1, GStatus.Runnable));
                 case EventType.GoUnblockLocal:
                 case EventType.GoSysExitLocal:
-                    return (ev.Args[0], new GState(Noseq, GStatus.Waiting), new GState(Seqinc, GStatus.Runnable));
+                    return (ev.Args[0], new GState(NoSeq, GStatus.Waiting), new GState(SeqInc, GStatus.Runnable));
                 case EventType.GcStart:
                     return (Garbage, new GState(ev.Args[0], GStatus.Dead), new GState(ev.Args[0] + 1, GStatus.Dead));
                 default:

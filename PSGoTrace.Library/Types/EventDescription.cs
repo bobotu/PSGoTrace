@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PSGoTrace.Library.Parser
+namespace PSGoTrace.Library.Types
 {
     public sealed class EventDescription
     {

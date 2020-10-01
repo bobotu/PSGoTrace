@@ -6,6 +6,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Threading;
 using PSGoTrace.Library;
+using PSGoTrace.Library.Util;
 
 namespace PSGoTrace.Util
 {

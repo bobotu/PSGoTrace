@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PSGoTrace.Library.Parser;
+using PSGoTrace.Library.Types;
 
-namespace PSGoTrace.Library.Analyzer
+namespace PSGoTrace.Library
 {
     public class AnnotationAnalyzer
     {
@@ -60,8 +60,8 @@ namespace PSGoTrace.Library.Analyzer
             GcEvents = gc;
         }
 
-        public IReadOnlyDictionary<ulong, UserTask> Tasks { get; }
-        public IReadOnlyList<UserRegion> Regions { get; }
-        public IReadOnlyList<TraceEvent> GcEvents { get; }
+        public IDictionary<ulong, UserTask> Tasks { get; }
+        public IList<UserRegion> Regions { get; }
+        public IList<TraceEvent> GcEvents { get; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace PSGoTrace.Library.Parser
+﻿namespace PSGoTrace.Library.Types
 {
     public enum EventType
     {

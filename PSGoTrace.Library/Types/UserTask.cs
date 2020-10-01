@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PSGoTrace.Library.Parser;
 
-namespace PSGoTrace.Library.Analyzer
+namespace PSGoTrace.Library.Types
 {
     public class UserTask : IEquatable<UserTask>
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PSGoTrace.Library
+namespace PSGoTrace.Library.Util
 {
     public interface IProgressRegistry
     {

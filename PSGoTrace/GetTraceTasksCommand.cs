@@ -1,5 +1,5 @@
 ﻿using System.Management.Automation;
-using PSGoTrace.Library.Parser;
+using PSGoTrace.Library.Types;
 
 namespace PSGoTrace
 {

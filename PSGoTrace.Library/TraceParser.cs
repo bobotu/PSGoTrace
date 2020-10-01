@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using PSGoTrace.Library.Types;
+using PSGoTrace.Library.Util;
 
-namespace PSGoTrace.Library.Parser
+namespace PSGoTrace.Library
 {
     public class TraceParser : IDisposable
     {
@@ -351,7 +353,7 @@ namespace PSGoTrace.Library.Parser
                         var create = g.EvCreate?.Args[1];
                         if (create != null)
                         {
-                            if (version < 1007) ev.Stack = new List<TraceFrame> {new TraceFrame(create.Value + 1)};
+                            if (version < 1007) ev.Stack = new StackTrace {new StackFrame(create.Value + 1)};
                             else ev.StackId = create.Value;
                             g.EvCreate = null;
                         }
@@ -515,7 +517,7 @@ namespace PSGoTrace.Library.Parser
 
         private static void AttachStacks(IEnumerable<TraceEvent> events, TraceContent content)
         {
-            var stacks = new Dictionary<ulong, List<TraceFrame>>();
+            var stacks = new Dictionary<ulong, StackTrace>();
             foreach (var e in events)
             {
                 if (e.StackId == 0) continue;
@@ -526,13 +528,13 @@ namespace PSGoTrace.Library.Parser
                     var size = info.Args[1];
                     if (id != 0 && size > 0)
                     {
-                        stack = new List<TraceFrame>((int) size);
+                        stack = new StackTrace((int) size);
                         for (var i = 0ul; i < size; i++)
                         {
                             var start = 2 + i * 4;
                             stack.Add(content.Version < 1007
-                                ? new TraceFrame(info.Args[2 + i])
-                                : new TraceFrame(info.Args[start], content.Strings[info.Args[start + 1]],
+                                ? new StackFrame(info.Args[2 + i])
+                                : new StackFrame(info.Args[start], content.Strings[info.Args[start + 1]],
                                     content.Strings[info.Args[start + 2]], (int) info.Args[start + 3]));
                         }
 

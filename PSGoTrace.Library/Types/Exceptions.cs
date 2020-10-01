@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PSGoTrace.Library.Parser
+namespace PSGoTrace.Library.Types
 {
     public sealed class EmptyTraceException : Exception
     {

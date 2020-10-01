@@ -1,6 +1,4 @@
-﻿using PSGoTrace.Library.Parser;
-
-namespace PSGoTrace.Library.Analyzer
+﻿namespace PSGoTrace.Library.Types
 {
     public class UserRegion
     {
@@ -19,7 +17,7 @@ namespace PSGoTrace.Library.Analyzer
         public string Name { get; }
         public TraceEvent? Start { get; }
         public TraceEvent? End { get; internal set; }
-        public TraceFrame? Frame => Start?.Stack[0];
+        public StackFrame? Frame => Start?.Stack?[0];
         public ExecutionStat Stat { get; internal set; }
     }
 }

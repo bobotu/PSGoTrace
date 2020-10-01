@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PSGoTrace.Library.Analyzer;
-using PSGoTrace.Library.Helper;
+using PSGoTrace.Library.Util;
 
 namespace PSGoTrace.Library
 {
@@ -10,7 +9,7 @@ namespace PSGoTrace.Library
     {
         private readonly MmuSeries[] _series;
 
-        public MmuCurve(IEnumerable<IList<MutatorUtil>> utils)
+        public MmuCurve(MutatorUtilSummary utils)
         {
             _series = utils.Select(util => new MmuSeries(util)).ToArray();
         }
@@ -239,9 +238,9 @@ namespace PSGoTrace.Library
             private readonly long _bandDur;
             private readonly double[] _sums;
             private readonly MmuBand[] _bands;
-            private readonly IList<MutatorUtil> _utils;
+            private readonly MutatorUtilSeries _utils;
 
-            public MmuSeries(IList<MutatorUtil> utils)
+            public MmuSeries(MutatorUtilSeries utils)
             {
                 if (utils.Count == 0) throw new ArgumentException("utils is empty");
                 _utils = utils;

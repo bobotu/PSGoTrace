@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Text;
 
-namespace PSGoTrace.Library.Parser
+namespace PSGoTrace.Library.Types
 {
-    public readonly struct TraceFrame : IEquatable<TraceFrame>
+    public readonly struct StackFrame : IEquatable<StackFrame>
     {
-        public TraceFrame(ulong pc, string fn = "", string file = "", int line = default)
+        public StackFrame(ulong pc, string fn = "", string file = "", int line = default)
         {
             Pc = pc;
             Fn = fn;
@@ -13,27 +13,20 @@ namespace PSGoTrace.Library.Parser
             Line = line;
         }
 
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine(Fn);
-            sb.Append($"\t{File}:{Line}");
-            return sb.ToString();
-        }
-
+        public override string ToString() => Fn;
         public ulong Pc { get; }
         public string Fn { get; }
         public string File { get; }
         public int Line { get; }
 
-        public bool Equals(TraceFrame other)
+        public bool Equals(StackFrame other)
         {
             return Pc == other.Pc && Fn == other.Fn && File == other.File && Line == other.Line;
         }
 
         public override bool Equals(object? obj)
         {
-            return obj is TraceFrame other && Equals(other);
+            return obj is StackFrame other && Equals(other);
         }
 
         public override int GetHashCode()
@@ -41,12 +34,12 @@ namespace PSGoTrace.Library.Parser
             return HashCode.Combine(Pc, Fn, File, Line);
         }
 
-        public static bool operator ==(TraceFrame left, TraceFrame right)
+        public static bool operator ==(StackFrame left, StackFrame right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(TraceFrame left, TraceFrame right)
+        public static bool operator !=(StackFrame left, StackFrame right)
         {
             return !left.Equals(right);
         }

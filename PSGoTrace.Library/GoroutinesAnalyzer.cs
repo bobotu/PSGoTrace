@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PSGoTrace.Library.Parser;
+using PSGoTrace.Library.Types;
 
-namespace PSGoTrace.Library.Analyzer
+namespace PSGoTrace.Library
 {
     public class GoroutinesAnalyzer
     {
@@ -76,7 +76,7 @@ namespace PSGoTrace.Library.Analyzer
                         g = gs[ev.G];
                         if (g.Pc == 0)
                         {
-                            g.Pc = ev.Stack[0].Pc;
+                            g.Pc = ev.Stack![0].Pc;
                             g.Name = ev.Stack[0].Fn;
                         }
 
