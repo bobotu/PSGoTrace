@@ -1,11 +1,8 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
 using System.Threading;
-using PSGoTrace.Library;
 using PSGoTrace.Library.Util;
 
 namespace PSGoTrace.Util
@@ -37,10 +34,7 @@ namespace PSGoTrace.Util
             return progress;
         }
 
-        public IProgressRegistry Fork(IProgressRegistry.IHandle parent)
-        {
-            return new ProgressRegistry(this, parent);
-        }
+        public IProgressRegistry Fork(IProgressRegistry.IHandle parent) => new ProgressRegistry(this, parent);
 
         private void WriteProgress(ProgressRecord record)
         {
@@ -50,15 +44,15 @@ namespace PSGoTrace.Util
 
         private class IdGenerator
         {
-            private int _counter = 0;
+            private int _counter;
 
             public int GetUniqId() => Interlocked.Increment(ref _counter);
         }
 
         private class Progress : IProgressRegistry.IHandle
         {
-            private readonly ProgressRecord _record;
             private readonly Action<ProgressRecord> _notify;
+            private readonly ProgressRecord _record;
 
             public Progress(int id, string name, string description, Action<ProgressRecord> notify, int? parent = null)
             {

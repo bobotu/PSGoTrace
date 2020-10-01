@@ -1,4 +1,4 @@
-﻿namespace PSGoTrace.Library
+namespace PSGoTrace.Library
 {
     public struct ExecutionStat
     {
@@ -26,18 +26,16 @@
             TotalTime = totalTime;
         }
 
-        public static ExecutionStat operator -(ExecutionStat lhs, ExecutionStat rhs)
-        {
-            return new ExecutionStat(
-                    lhs.ExecTime - rhs.ExecTime,
-                    lhs.SchedWaitTime - rhs.SchedWaitTime,
-                    lhs.IoTime - rhs.IoTime,
-                    lhs.BlockTime - rhs.BlockTime,
-                    lhs.SyscallTime - rhs.SyscallTime,
-                    lhs.GcTime - rhs.GcTime,
-                    lhs.SweepTime - rhs.SweepTime, 
+        public static ExecutionStat operator -(ExecutionStat lhs, ExecutionStat rhs) =>
+            new ExecutionStat(
+                lhs.ExecTime - rhs.ExecTime,
+                lhs.SchedWaitTime - rhs.SchedWaitTime,
+                lhs.IoTime - rhs.IoTime,
+                lhs.BlockTime - rhs.BlockTime,
+                lhs.SyscallTime - rhs.SyscallTime,
+                lhs.GcTime - rhs.GcTime,
+                lhs.SweepTime - rhs.SweepTime,
                 lhs.AssitMarkTime - rhs.AssitMarkTime,
                 lhs.TotalTime - rhs.TotalTime);
-        }
     }
 }

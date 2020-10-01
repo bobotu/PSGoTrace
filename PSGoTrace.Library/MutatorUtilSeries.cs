@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,6 +7,13 @@ namespace PSGoTrace.Library
     public class MutatorUtilSeries : IReadOnlyList<MutatorUtil>
     {
         private readonly List<MutatorUtil> _utils = new List<MutatorUtil>();
+
+        public IEnumerator<MutatorUtil> GetEnumerator() => _utils.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable) _utils).GetEnumerator();
+
+        public int Count => _utils.Count;
+        public MutatorUtil this[int index] => _utils[index];
 
         internal void Add(MutatorUtil mu)
         {
@@ -22,19 +29,5 @@ namespace PSGoTrace.Library
 
             _utils.Add(mu);
         }
-
-        public IEnumerator<MutatorUtil> GetEnumerator()
-        {
-            return _utils.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable) _utils).GetEnumerator();
-        }
-
-        public int Count => _utils.Count;
-
-        public MutatorUtil this[int index] => _utils[index];
     }
 }

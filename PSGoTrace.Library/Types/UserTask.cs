@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -164,20 +164,11 @@ namespace PSGoTrace.Library.Types
             return Equals((UserTask) obj);
         }
 
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+        public override int GetHashCode() => Id.GetHashCode();
 
-        public static bool operator ==(UserTask? left, UserTask? right)
-        {
-            return Equals(left, right);
-        }
+        public static bool operator ==(UserTask? left, UserTask? right) => Equals(left, right);
 
-        public static bool operator !=(UserTask? left, UserTask? right)
-        {
-            return !Equals(left, right);
-        }
+        public static bool operator !=(UserTask? left, UserTask? right) => !Equals(left, right);
 
         internal void AddGoroutine(ulong id)
         {
@@ -227,9 +218,7 @@ namespace PSGoTrace.Library.Types
         /// <param name="start2">start of second time span</param>
         /// <param name="end2">end of second time span</param>
         /// <returns>overlapping time duration between two time intervals</returns>
-        private static long OverlappingDuration(long start1, long end1, long start2, long end2)
-        {
-            return end1 < start2 || end2 < start1 ? 0 : Math.Min(end1, end2) - Math.Max(start1, start2);
-        }
+        private static long OverlappingDuration(long start1, long end1, long start2, long end2) =>
+            end1 < start2 || end2 < start1 ? 0 : Math.Min(end1, end2) - Math.Max(start1, start2);
     }
 }

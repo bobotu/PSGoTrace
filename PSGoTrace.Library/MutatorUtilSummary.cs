@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,16 +38,9 @@ namespace PSGoTrace.Library
             PerProc = 1 << 5
         }
 
-        private readonly IList<MutatorUtilSeries> _utils;
         private readonly Option _option;
 
-        public bool IncludeStw => (_option & Option.Stw) != 0;
-        public bool IncludeBackground => (_option & Option.Background) != 0;
-        public bool IncludeAssist => (_option & Option.Assist) != 0;
-        public bool IncludeSweep => (_option & Option.Sweep) != 0;
-        public bool IsPerProc => (_option & Option.PerProc) != 0;
-        public int ProcCount => _utils.Count;
-        public MutatorUtilSeries this[Index index] => _utils[index];
+        private readonly IList<MutatorUtilSeries> _utils;
 
         public MutatorUtilSummary(Option prop, IList<TraceEvent> events)
         {
@@ -202,11 +195,16 @@ namespace PSGoTrace.Library
             ps.ForEach(p => _utils[p.series].Add(mu));
         }
 
+        public bool IncludeStw => (_option & Option.Stw) != 0;
+        public bool IncludeBackground => (_option & Option.Background) != 0;
+        public bool IncludeAssist => (_option & Option.Assist) != 0;
+        public bool IncludeSweep => (_option & Option.Sweep) != 0;
+        public bool IsPerProc => (_option & Option.PerProc) != 0;
+        public int ProcCount => _utils.Count;
+        public MutatorUtilSeries this[Index index] => _utils[index];
+
         public IEnumerator<MutatorUtilSeries> GetEnumerator() => _utils.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

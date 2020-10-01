@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace PSGoTrace.Library.Types
@@ -45,20 +45,11 @@ namespace PSGoTrace.Library.Types
             return Equals((TraceEvent) obj);
         }
 
-        public override int GetHashCode()
-        {
-            return Offset;
-        }
+        public override int GetHashCode() => Offset;
 
-        public static bool operator ==(TraceEvent? left, TraceEvent? right)
-        {
-            return Equals(left, right);
-        }
+        public static bool operator ==(TraceEvent? left, TraceEvent? right) => Equals(left, right);
 
-        public static bool operator !=(TraceEvent? left, TraceEvent? right)
-        {
-            return !Equals(left, right);
-        }
+        public static bool operator !=(TraceEvent? left, TraceEvent? right) => !Equals(left, right);
 
         private sealed class SeqRelationalComparer : IComparer<TraceEvent>
         {

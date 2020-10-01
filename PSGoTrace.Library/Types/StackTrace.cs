@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -18,21 +18,20 @@ namespace PSGoTrace.Library.Types
             _frames = new List<StackFrame>(capacity);
         }
 
-        public IEnumerator<StackFrame> GetEnumerator()
-        {
-            return _frames.GetEnumerator();
-        }
+        public IEnumerator<StackFrame> GetEnumerator() => _frames.GetEnumerator();
 
-        internal void Add(StackFrame frame) => _frames.Add(frame);
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable) _frames).GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable) _frames).GetEnumerator();
 
         public int Count => _frames.Count;
 
         public StackFrame this[int index] => _frames[index];
+
+        internal void Add(StackFrame frame)
+        {
+            _frames.Add(frame);
+        }
+
 
         public override string ToString()
         {

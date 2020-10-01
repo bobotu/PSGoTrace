@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PSGoTrace.Library.Types;
@@ -188,6 +188,7 @@ namespace PSGoTrace.Library
                             gg._stat.AssitMarkTime += ev.Ts - gg._desc!.BlockAssitMarkTime;
                             gg._desc!.BlockAssitMarkTime = 0;
                         }
+
                         break;
                     }
                     case EventType.GcStart:

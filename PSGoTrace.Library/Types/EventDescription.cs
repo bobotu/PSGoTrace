@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace PSGoTrace.Library.Types
 {
@@ -113,9 +113,6 @@ namespace PSGoTrace.Library.Types
         public string[] Args { get; }
         public string[]? StringArgs { get; }
 
-        public static EventDescription Of(EventType type)
-        {
-            return Descriptions[type];
-        }
+        public static EventDescription Of(EventType type) => Descriptions[type];
     }
 }

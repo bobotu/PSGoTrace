@@ -1,4 +1,4 @@
-﻿namespace PSGoTrace.Library.Types
+namespace PSGoTrace.Library.Types
 {
     internal enum GStatus
     {

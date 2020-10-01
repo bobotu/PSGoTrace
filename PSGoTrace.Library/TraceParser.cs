@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,9 +23,9 @@ namespace PSGoTrace.Library
             _registry = registry?.Fork(_total!);
         }
 
-        public TraceParser(string path, IProgressRegistry? registry = null) : this(File.OpenRead(path), registry, false)
-        {
-        }
+        public TraceParser(string path, IProgressRegistry? registry = null) : this(File.OpenRead(path), registry) { }
+
+        private long Position => _reader.BaseStream.Position;
 
         public void Dispose()
         {
@@ -545,8 +545,6 @@ namespace PSGoTrace.Library
                 if (!(stack is null)) e.Stack = stack;
             }
         }
-
-        private long Position => _reader.BaseStream.Position;
 
         private string ReadStr()
         {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+using System;
 
 namespace PSGoTrace.Library.Types
 {
@@ -14,34 +13,21 @@ namespace PSGoTrace.Library.Types
         }
 
         public override string ToString() => Fn;
+
         public ulong Pc { get; }
         public string Fn { get; }
         public string File { get; }
         public int Line { get; }
 
-        public bool Equals(StackFrame other)
-        {
-            return Pc == other.Pc && Fn == other.Fn && File == other.File && Line == other.Line;
-        }
+        public bool Equals(StackFrame other) =>
+            Pc == other.Pc && Fn == other.Fn && File == other.File && Line == other.Line;
 
-        public override bool Equals(object? obj)
-        {
-            return obj is StackFrame other && Equals(other);
-        }
+        public override bool Equals(object? obj) => obj is StackFrame other && Equals(other);
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Pc, Fn, File, Line);
-        }
+        public override int GetHashCode() => HashCode.Combine(Pc, Fn, File, Line);
 
-        public static bool operator ==(StackFrame left, StackFrame right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(StackFrame left, StackFrame right) => left.Equals(right);
 
-        public static bool operator !=(StackFrame left, StackFrame right)
-        {
-            return !left.Equals(right);
-        }
+        public static bool operator !=(StackFrame left, StackFrame right) => !left.Equals(right);
     }
 }

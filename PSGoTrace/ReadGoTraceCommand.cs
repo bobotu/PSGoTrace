@@ -1,4 +1,4 @@
-﻿using System.Management.Automation;
+using System.Management.Automation;
 using PSGoTrace.Library;
 using PSGoTrace.Library.Types;
 
@@ -14,10 +14,7 @@ namespace PSGoTrace
         protected override void ProcessRecord()
         {
             using var parser = new TraceParser(Path);
-            foreach (var traceEvent in parser.Parse())
-            {
-                WriteObject(traceEvent);
-            }
+            foreach (var traceEvent in parser.Parse()) WriteObject(traceEvent);
         }
     }
 }

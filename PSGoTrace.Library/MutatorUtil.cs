@@ -1,4 +1,4 @@
-﻿namespace PSGoTrace.Library
+namespace PSGoTrace.Library
 {
     public readonly struct MutatorUtil
     {

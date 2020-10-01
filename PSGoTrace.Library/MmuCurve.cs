@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PSGoTrace.Library.Util;
@@ -21,10 +21,7 @@ namespace PSGoTrace.Library
         /// </summary>
         /// <param name="window">window size</param>
         /// <returns>MMU for the given time window</returns>
-        public double CalcMmu(long window)
-        {
-            return new MutatorStats(_series, window).Mmu;
-        }
+        public double CalcMmu(long window) => new MutatorStats(_series, window).Mmu;
 
         /// <summary>
         ///     returns n specific examples of the lowest mutator
@@ -111,10 +108,7 @@ namespace PSGoTrace.Library
                     _revers = revers;
                 }
 
-                public int Compare(UtilWindow x, UtilWindow y)
-                {
-                    return _revers ? -CompareRaw(x, y) : CompareRaw(x, y);
-                }
+                public int Compare(UtilWindow x, UtilWindow y) => _revers ? -CompareRaw(x, y) : CompareRaw(x, y);
 
                 private static int CompareRaw(UtilWindow x, UtilWindow y)
                 {
@@ -279,10 +273,7 @@ namespace PSGoTrace.Library
                 }
             }
 
-            public MutatorUtil Util(Index i)
-            {
-                return _utils[i];
-            }
+            public MutatorUtil Util(Index i) => _utils[i];
 
             public BandUtil[] CalcBandUtils(int series, long window)
             {
@@ -426,18 +417,12 @@ namespace PSGoTrace.Library
                 return (start, start + _bandDur);
             }
 
-            private static double TotalUtilOf(double mean, long dur)
-            {
-                return mean * dur;
-            }
+            private static double TotalUtilOf(double mean, long dur) => mean * dur;
         }
 
         private readonly struct BandUtil : IComparable<BandUtil>, IComparable
         {
-            public int CompareTo(BandUtil other)
-            {
-                return UtilBound.CompareTo(other.UtilBound);
-            }
+            public int CompareTo(BandUtil other) => UtilBound.CompareTo(other.UtilBound);
 
             public int CompareTo(object? obj)
             {

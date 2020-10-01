@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PSGoTrace.Library.Util
@@ -16,26 +16,17 @@ namespace PSGoTrace.Library.Util
             for (var i = n / 2 - 1; i >= 0; i--) Down(i, n);
         }
 
-        public BinaryHeap() : this(new List<T>(), Comparer<T>.Default)
-        {
-        }
+        public BinaryHeap() : this(new List<T>(), Comparer<T>.Default) { }
 
-        public BinaryHeap(List<T> list) : this(list, Comparer<T>.Default)
-        {
-        }
+        public BinaryHeap(List<T> list) : this(list, Comparer<T>.Default) { }
 
-        public BinaryHeap(IComparer<T> comparer) : this(new List<T>(), comparer)
-        {
-        }
+        public BinaryHeap(IComparer<T> comparer) : this(new List<T>(), comparer) { }
 
         public T Head => _list[0];
 
         public int Count => _list.Count;
 
-        public T[] ToArray()
-        {
-            return _list.ToArray();
-        }
+        public T[] ToArray() => _list.ToArray();
 
         public void Add(T x)
         {

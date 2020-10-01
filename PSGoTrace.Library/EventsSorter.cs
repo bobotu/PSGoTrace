@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using HPCsharp;
@@ -13,8 +13,8 @@ namespace PSGoTrace.Library
         private const ulong Garbage = ~0UL - 1;
         private const ulong NoSeq = ~0UL;
         private const ulong SeqInc = ~0UL - 1;
-        private readonly int _version;
         private readonly IProgressRegistry? _registry;
+        private readonly int _version;
 
         public EventsSorter(int version, IProgressRegistry? registry = null)
         {
@@ -22,10 +22,8 @@ namespace PSGoTrace.Library
             _registry = registry;
         }
 
-        public List<TraceEvent> SortEvents(IDictionary<int, List<TraceEvent>> rawBatches)
-        {
-            return _version < 1007 ? Sort1005(rawBatches) : Sort1007(rawBatches);
-        }
+        public List<TraceEvent> SortEvents(IDictionary<int, List<TraceEvent>> rawBatches) =>
+            _version < 1007 ? Sort1005(rawBatches) : Sort1007(rawBatches);
 
         private List<TraceEvent> Sort1007(IDictionary<int, List<TraceEvent>> rawBatches)
         {
@@ -167,10 +165,8 @@ namespace PSGoTrace.Library
             };
         }
 
-        private static bool TransitionReady(ulong g, GState curr, GState init)
-        {
-            return g == Unordered || (init.Seq == NoSeq || init.Seq == curr.Seq) && init.Status == curr.Status;
-        }
+        private static bool TransitionReady(ulong g, GState curr, GState init) => g == Unordered ||
+            (init.Seq == NoSeq || init.Seq == curr.Seq) && init.Status == curr.Status;
 
         private static (ulong g, GState init, GState next) StateTransition(TraceEvent ev)
         {
@@ -236,10 +232,7 @@ namespace PSGoTrace.Library
             public bool Selected { get; set; }
             public TraceEvent Head => _events[_index];
 
-            public bool HasMore()
-            {
-                return _index < _events.Count;
-            }
+            public bool HasMore() => _index < _events.Count;
 
             public void MoveNext()
             {
@@ -249,10 +242,7 @@ namespace PSGoTrace.Library
 
         private readonly struct OrderEvent : IComparable<OrderEvent>
         {
-            public int CompareTo(OrderEvent other)
-            {
-                return Event.Ts.CompareTo(other.Event.Ts);
-            }
+            public int CompareTo(OrderEvent other) => Event.Ts.CompareTo(other.Event.Ts);
 
             public OrderEvent(TraceEvent traceEvent, int batch, ulong g, GState init, GState next)
             {
