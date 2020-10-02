@@ -282,7 +282,7 @@ namespace PSGoTrace.Library
             public long StartTime { get; internal set; }
             public long? EndTime { get; internal set; }
 
-            public List<UserRegion> Regions { get; }
+            public List<UserRegion> Regions { get; } = new List<UserRegion>();
 
             public ref ExecutionStat Stat => ref _stat;
 
