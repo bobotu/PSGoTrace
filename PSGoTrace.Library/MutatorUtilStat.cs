@@ -6,7 +6,7 @@ using PSGoTrace.Library.Types;
 
 namespace PSGoTrace.Library
 {
-    public class MutatorUtilSummary : IEnumerable<MutatorUtilSeries>
+    public class MutatorUtilStat : IReadOnlyList<MutatorUtilSeries>
     {
         [Flags]
         public enum Option
@@ -42,7 +42,7 @@ namespace PSGoTrace.Library
 
         private readonly IList<MutatorUtilSeries> _utils;
 
-        public MutatorUtilSummary(Option prop, IList<TraceEvent> events)
+        public MutatorUtilStat(Option prop, IList<TraceEvent> events)
         {
             if (events.Count == 0) throw new ArgumentException("Events cannot be empty");
             _option = prop;
@@ -201,10 +201,11 @@ namespace PSGoTrace.Library
         public bool IncludeSweep => (_option & Option.Sweep) != 0;
         public bool IsPerProc => (_option & Option.PerProc) != 0;
         public int ProcCount => _utils.Count;
-        public MutatorUtilSeries this[Index index] => _utils[index];
-
         public IEnumerator<MutatorUtilSeries> GetEnumerator() => _utils.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable) _utils).GetEnumerator();
+        public int Count => _utils.Count;
+
+        public MutatorUtilSeries this[int index] => _utils[index];
     }
 }

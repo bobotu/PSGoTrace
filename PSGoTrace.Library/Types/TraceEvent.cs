@@ -5,7 +5,7 @@ namespace PSGoTrace.Library.Types
 {
     public class TraceEvent : IEquatable<TraceEvent>
     {
-        public TraceEvent(int offset, EventType type, int p, ulong g)
+        internal TraceEvent(int offset, EventType type, int p, ulong g)
         {
             Offset = offset;
             Type = type;

@@ -9,7 +9,7 @@ namespace PSGoTrace.Library
     {
         private readonly MmuSeries[] _series;
 
-        public MmuCurve(MutatorUtilSummary utils)
+        public MmuCurve(MutatorUtilStat utils)
         {
             _series = utils.Select(util => new MmuSeries(util)).ToArray();
         }

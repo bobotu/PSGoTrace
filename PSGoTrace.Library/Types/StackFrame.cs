@@ -4,7 +4,7 @@ namespace PSGoTrace.Library.Types
 {
     public readonly struct StackFrame : IEquatable<StackFrame>
     {
-        public StackFrame(ulong pc, string fn = "", string file = "", int line = default)
+        internal StackFrame(ulong pc, string fn = "", string file = "", int line = default)
         {
             Pc = pc;
             Fn = fn;
