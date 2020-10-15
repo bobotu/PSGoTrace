@@ -21,18 +21,16 @@ namespace PSGoTrace.Library
             UserTask CreateTask(ulong id) => new UserTask(firstTimestamp, lastTimestamp, id);
 
             foreach (var ev in events)
-                switch (ev.Type)
-                {
-                    case EventType.UserTaskCreate:
-                    case EventType.UserTaskEnd:
-                    case EventType.UserLog:
-                        var id = ev.Args[0];
-                        var task = _tasks.GetOrAdd(id, CreateTask);
-                        task.AddEvent(ev);
-                        if (ev.Type == EventType.UserTaskCreate && ev.Args[1] != 0)
-                            _tasks.GetOrAdd(ev.Args[1], CreateTask).AddChild(task);
-                        break;
-                }
+            {
+                if (ev.Type != EventType.UserTaskCreate && ev.Type != EventType.UserTaskEnd &&
+                    ev.Type != EventType.UserLog) continue;
+
+                var id = ev.Args[0];
+                var task = _tasks.GetOrAdd(id, CreateTask);
+                task.AddEvent(ev);
+                if (ev.Type == EventType.UserTaskCreate && ev.Args[1] != 0)
+                    _tasks.GetOrAdd(ev.Args[1], CreateTask).AddChild(task);
+            }
 
             foreach (var (id, stat) in goroutines)
             {
@@ -47,9 +45,9 @@ namespace PSGoTrace.Library
 
                     _regions.Add(region);
                 }
-
-                _tasks.Values.AsParallel().ForEach(t => t.SortRegions());
             }
+
+            _tasks.Values.AsParallel().ForEach(t => t.SortRegions());
         }
 
         public IReadOnlyList<UserRegion> Regions => _regions;

@@ -26,6 +26,8 @@ namespace PSGoTrace.Library.Types
         public string[]? StringArgs { get; internal set; }
         public TraceEvent? Link { get; internal set; }
 
+        public override string ToString() => Type.ToString();
+
         public static IComparer<TraceEvent> SeqComparer { get; } = new SeqRelationalComparer();
 
         public static IComparer<TraceEvent> TsComparer { get; } = new TsRelationalComparer();

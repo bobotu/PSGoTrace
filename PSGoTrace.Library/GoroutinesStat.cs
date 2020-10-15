@@ -273,6 +273,7 @@ namespace PSGoTrace.Library
                 Id = id;
                 Name = "";
                 CreationTime = creationTime;
+                _pending.Reset();
             }
 
             public ulong Id { get; }

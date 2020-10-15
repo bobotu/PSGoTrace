@@ -156,6 +156,8 @@ namespace PSGoTrace.Library.Types
             return set;
         }
 
+        public override string ToString() => Name;
+
         public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;

@@ -5,11 +5,11 @@ using PSGoTrace.Library.Util;
 
 namespace PSGoTrace.Library
 {
-    public class MmuCurve
+    public class MmuStat
     {
         private readonly MmuSeries[] _series;
 
-        public MmuCurve(MutatorUtilStat utils)
+        public MmuStat(MutatorUtilStat utils)
         {
             _series = utils.Select(util => new MmuSeries(util)).ToArray();
         }

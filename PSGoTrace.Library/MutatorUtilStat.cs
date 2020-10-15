@@ -14,28 +14,28 @@ namespace PSGoTrace.Library
             /// <summary>
             ///     utilization should account for STW events.
             /// </summary>
-            Stw = 1 << 1,
+            Stw = 1,
 
             /// <summary>
             ///     utilization should account for background mark workers.
             /// </summary>
-            Background = 1 << 2,
+            Background = 1 << 1,
 
             /// <summary>
             ///     utilization should account for mark.
             /// </summary>
-            Assist = 1 << 3,
+            Assist = 1 << 2,
 
             /// <summary>
             ///     utilization should account for sweeping.
             /// </summary>
-            Sweep = 1 << 4,
+            Sweep = 1 << 3,
 
             /// <summary>
             ///     each P should be given a separate utilization function.
             ///     Otherwise, there is a single function and each P is given a fraction of the utilization.
             /// </summary>
-            PerProc = 1 << 5
+            PerProc = 1 << 4
         }
 
         private readonly Option _option;
